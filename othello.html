@@ -1,0 +1,235 @@
+<html>
+<script>
+    var discl;
+    var turn = 1;
+    var board;
+    var boxwidth = 50;
+    var gap = 3;
+    var discs = [
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 2, 1, 0, 0, 0],
+        [0, 0, 0, 1, 2, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+    ];
+
+    window.onload = function () {
+        board = document.getElementById("board");
+        discl = document.getElementById("discl");
+        board.style.width = (boxwidth * 8 + gap * 9);
+        board.style.height = boxwidth * 8 + gap * 9;
+        drawboxes();
+        drawdisc();
+    }
+
+    function drawboxes() {
+        for (var row = 0; row < 8; row++) {
+            for (var column = 0; column < 8; column++) {
+                var box = document.createElement("div");
+                box.style.position = "absolute";
+                box.style.height = boxwidth;
+                box.style.width = boxwidth;
+                box.style.left = (boxwidth + gap) * row + gap;
+                box.style.top = (boxwidth + gap) * column + gap;
+                box.style.backgroundColor = "green";
+                box.setAttribute('onclick', "handleclick(" + row + ',' + column + ")")
+                document.getElementById('board').appendChild(box);
+            }
+        }
+
+    }
+    function handleclick(row, column) {
+        if (discs[row][column] != 0) {
+            return;
+        }
+        if (canclick(row, column) == true) {
+            var affdiscs = getaffdiscs(row, column);
+            changingdiscs(affdiscs);
+            discs[row][column] = turn;
+            if (turn == 1) turn = 2;
+            else
+                turn = 1;
+            drawdisc();
+        }
+
+        function canclick(row, column) {
+            if (getaffdiscs(row, column) == 0)
+                return false;
+            else
+                return true;
+        }
+        function getaffdiscs(row, column) {
+            var affdiscs = [];
+            var couldbeaff = [];
+            var c = column;
+            while (c < 7) {
+                c += 1;
+                var val = discs[row][c];
+                if (val == 0 || val == turn) {
+                    if (val == turn)
+                        affdiscs = affdiscs.concat(couldbeaff);
+                    break;
+                }
+                else {
+                    var discloc = { row: row, column: c };
+                    couldbeaff.push(discloc);
+                }
+            }
+            var couldbeaff = [];
+            var c = column;
+            while (c > 0) {
+                c -= 1;
+                var val = discs[row][c];
+                if (val == 0 || val == turn) {
+                    if (val == turn)
+                        affdiscs = affdiscs.concat(couldbeaff);
+                    break;
+                }
+                else {
+                    var discloc = { row: row, column: c };
+                    couldbeaff.push(discloc);
+                }
+            }
+            var couldbeaff = [];
+            var r = row;
+            while (r <7) {
+                r += 1;
+                var val = discs[r][column];
+                if (val == 0 || val == turn) {
+                    if (val == turn)
+                        affdiscs = affdiscs.concat(couldbeaff);
+                    break;
+                }
+                else {
+                    var discloc = { row: r, column: column };
+                    couldbeaff.push(discloc);
+                }
+            }
+            var couldbeaff = [];
+            var r = row;
+            while (r > 0) {
+                r -= 1;
+                var val = discs[r][column];
+                if (val == 0 || val == turn) {
+                    if (val == turn)
+                        affdiscs = affdiscs.concat(couldbeaff);
+                    break;
+                }
+                else {
+                    var discloc = { row: r, column: column };
+                    couldbeaff.push(discloc);
+                }
+            }
+            var couldbeaff = [];
+            var r = row;
+            var c = column;
+            while (r > 0 && c>0) {
+                r -= 1;c-=1;
+                var val = discs[r][c];
+                if (val == 0 || val == turn) {
+                    if (val == turn)
+                        affdiscs = affdiscs.concat(couldbeaff);
+                    break;
+                }
+                else {
+                    var discloc = { row: r, column: c };
+                    couldbeaff.push(discloc);
+                }
+            }
+            var couldbeaff = [];
+            var r = row;
+            var c = column;
+            while (r > 0 && c<7) {
+                r -= 1;c+=1;
+                var val = discs[r][c];
+                if (val == 0 || val == turn) {
+                    if (val == turn)
+                        affdiscs = affdiscs.concat(couldbeaff);
+                    break;
+                }
+                else {
+                    var discloc = { row: r, column: c };
+                    couldbeaff.push(discloc);
+                }
+            }
+            var couldbeaff = [];
+            var r = row;
+            var c = column;
+            while (r <7 && c<7) {
+                r += 1;c+=1;
+                var val = discs[r][c];
+                if (val == 0 || val == turn) {
+                    if (val == turn)
+                        affdiscs = affdiscs.concat(couldbeaff);
+                    break;
+                }
+                else {
+                    var discloc = { row: r, column: c };
+                    couldbeaff.push(discloc);
+                }
+            }
+            var couldbeaff = [];
+            var r = row;
+            var c = column;
+            while (r <7 && c>0) {
+                r += 1;c-=1;
+                var val = discs[r][c];
+                if (val == 0 || val == turn) {
+                    if (val == turn)
+                        affdiscs = affdiscs.concat(couldbeaff);
+                    break;
+                }
+                else {
+                    var discloc = { row: r, column: c };
+                    couldbeaff.push(discloc);
+                }
+            }
+            return affdiscs;
+
+        }
+        function changingdiscs() {
+            for (var i = 0; i < affdiscs.length; i++) {
+                var spot = affdiscs[i];
+                if (discs[spot.row][spot.column] == 1) {
+                    discs[spot.row][spot.column] = 2;
+                }
+                else {
+                    discs[spot.row][spot.column] = 1;
+                }
+            }
+        }
+
+
+    }
+    function drawdisc() {
+        discl.innerHTML = " ";
+        for (var row = 0; row < 8; row++) {
+            for (var column = 0; column < 8; column++) {
+                var val = discs[row][column];
+                if (val == 0) { }
+                else {
+                    var disk = document.createElement("div");
+                    disk.style.position = "absolute";
+                    disk.style.height = boxwidth - 4;
+                    disk.style.width = boxwidth - 4;
+                    disk.style.borderRadius = '50%';
+                    disk.style.left = (boxwidth + gap) * row + gap + 2;
+                    disk.style.top = (boxwidth + gap) * column + gap + 2;
+                    if (val == 1)
+                        disk.style.backgroundColor = "black";
+                    if (val == 2)
+                        disk.style.backgroundColor = "white"
+
+                    discl.appendChild(disk);
+                }
+            }
+        }
+    }
+</script>
+<div id="board" style="position: absolute;left: 0;top: 0;background-color: black;height: 500;width: 500;"></div>
+<div id="discl"></div>
+
+</html>
