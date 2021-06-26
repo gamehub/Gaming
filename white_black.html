@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>White-Black Game</title>
+</head>
+<style>
+ 
+canvas {
+    position: relative; 
+    top: 0;
+    left: 0;
+    width: 100vw;  /* 100% */
+    height: 100vh;   /* 100% */
+    border: rgb(141, 105, 105);
+}
+/* body {
+   font-family: 'MinecraftiaRegular';
+   font-weight: normal;
+   font-style: normal;
+} */
+</style>
+<body>
+    <canvas id="canvas" style="border:1px solid black;">Hey canvas is NOT supperted!</canvas>
+    <!-- <img id="lifeb" width="50" height="50" src="C:\Users\91924\Desktop\VS code\js\life_blk.jpg"  > -->
+    <link rel="stylesheet" media="screen" href="https://fontlibrary.org//face/minecraftia" type="text/css"/>
+    
+</body>
+    
+<script>
+    const canvas = document.getElementById('canvas')
+    canvas.width = canvas.getBoundingClientRect().width;
+    canvas.height = canvas.getBoundingClientRect().height;
+    const ctx = canvas.getContext('2d')
+    
+    const canvasH =  canvas.height
+    const canvasW = canvas.width
+   
+    
+    let ball = {x:40, y:20, r:5, dx:5, dy:1};
+    let blk = {w:Math.round(canvasW/4), h:Math.round(canvasH/20)}
+    let block1 = {x:Math.round(4*canvasW/5-blk.w), y:Math.round(canvasH/3), dx:-1 }
+    let block2 = {x:Math.round(3*canvasW/5), y: Math.round(canvasH/3+3*blk.h), dx:2 }
+    let block3 = {x:Math.round(2*canvasW/5), y:Math.round(canvasH/3+9*blk.h), dx:2 }
+    
+    let blockA = {x:10, y:Math.round(canvasH/3-2*canvasH/10), w: Math.round(2*canvasW/5), h:Math.round(canvasH/20)}
+    let blockC = {x:Math.round(20+2*canvasW/5), y: Math.round(canvasH/3-2*canvasH/10), w: Math.round(canvasW-(30+2*canvasW/5)), h:Math.round(canvasH/20)} 
+    let bigBlock = {x:10, y:Math.round(canvasH/3), w:Math.round(canvasW/5), h:Math.round(2*canvasH/3)}
+    let blockD = {x:Math.round(canvasW/2), y:Math.round(canvasH/3+6*blk.h), w: Math.round(canvasW/8), h:Math.round(canvasH/20)}
+    let blockE = {x:Math.round(3*canvasW/4), y:Math.round(19*canvasH/20), w: Math.round(canvasW/4), h:Math.round(canvasH/20)}
+    let coin1 = {x:blockC.x+blockC.w/2,y:blockC.y-blockC.h}
+    let coin2 = {x:bigBlock.x+bigBlock.w, y:bigBlock.y-blockC.h}
+    let coin3 = {x:blockE.x+blockE.w/2, y:blockE.y-blockC.h}
+    let coin = {c1:1, c2:1, c3:1} 
+    
+
+    let bl="black"
+    let temp="#D3D3D3"
+    let bColour="black"
+    let gameOver=3
+    
+    drawB1()
+    drawB2()
+    drawB3()
+    drawBall()
+    drawRest()
+    drawLife()
+    drawRed()
+    moveB1()
+    space()
+    checkKey()
+       
+    // image.onload = function () {
+    //     var img = getElementById("lifeb")
+    //     ctx.drawImage(lifeb,0,0);
+    // }
+
+    function drawBall() {
+        ctx.beginPath()
+        ctx.arc(ball.x,ball.y,ball.r,0,2 * Math.PI,true)
+        ctx.fillStyle=bColour
+        ctx.fill()
+        ctx.closePath()
+    }
+
+    function drawCoin1() {
+        ctx.beginPath()
+        ctx.rect(coin1.x,coin1.y,10,10)
+        ctx.fillStyle='yellow'
+        ctx.fill()
+        ctx.closePath()
+    }
+
+    function drawCoin2() {
+        ctx.beginPath()
+        ctx.rect(coin2.x,coin2.y,10,10)
+        ctx.fillStyle='yellow'
+        ctx.fill()
+        ctx.closePath()
+    }
+
+    function drawCoin3() {
+        ctx.beginPath()
+        ctx.rect(coin3.x,coin3.y,10,10)
+        ctx.fillStyle='yellow'
+        ctx.fill()
+        ctx.closePath()
+    }
+
+    function checkKey() {
+        document.addEventListener("keydown", e3=> {
+            
+            if(e3.keyCode == 38 && ball.y-ball.r>0 && bottomCheck()){
+                //console.log("up arrow pressed!")
+                ball.y-=10*ball.dy             
+            }
+        })
+        document.addEventListener("keydown", e2=> {
+            if(e2.keyCode == 39 && ball.x+ball.r<canvasW-1 && leftCheck()){
+                //console.log("right arrow pressed!")
+                //console.log(leftCheck())
+                ball.x+=ball.dx
+            }
+            if(e2.keyCode == 37 && ball.x-ball.r>0 && checkRight()){
+                //console.log("left arrow pressed!")
+                ball.x-=ball.dx
+            }
+            
+        })
+        
+    }
+    
+    // image.onload = finishDrawing;
+    // function finishDrawing(){
+    //     // var drawing = document.getElementById("drawing");
+    //     // var con = drawing.getContext("2d");
+    //     var goofyPic = document.getElementById("lifeb");
+    //     ctx.drawImage(goofyPic, 0, 0, 500, 500);
+    //     var image2 = new Image();
+    //     image2.src = "C:\Users\91924\Desktop\VS code\js\life_blk.jpg";
+    //     ctx.drawImage(image2, 100, 100, 700, 500);
+    // }
+    // function drawDiamond(context, x, y, width, height){
+    //     context.save();/*  w w  w .j a va 2 s  .c o m*/
+    //             context.beginPath();
+    //             context.moveTo(x, y);
+                
+    //             // top left edge
+    //             context.lineTo(x - width / 2, y + height / 2);
+                
+    //             // bottom left edge
+    //             context.lineTo(x, y + height);
+                
+    //             // bottom right edge
+    //             context.lineTo(x + width / 2, y + height / 2);
+                
+    //             // closing the path automatically creates
+    //             // the top right edge
+    //             context.closePath();
+                
+    //             context.fillStyle = "red";
+    //             context.fill();
+    //     context.restore();
+    //         }
+    //         window.onload = function(){
+    //             var canvas = document.getElementById("myCanvas");
+    //             var context = canvas.getContext("2d");
+        
+    //             drawDiamond(context, 500, 500, 75, 100);
+    //         };
+    
+    function drawRed() {
+        ctx.beginPath()
+        ctx.rect(0,0,canvasW,10)
+        ctx.fillStyle='red'
+        ctx.fill()
+        ctx.closePath()
+    }
+
+    function drawLife() {
+            ctx.beginPath()
+            // ctx.font = 'Courier New'
+            ctx.fillStyle = bColour;
+            ctx.fill()
+            ctx.fillText("LIVES: "+ gameOver,canvasW-60,20)
+            ctx.fillText("COINS: "+ (3-(coin.c1+coin.c2+coin.c3)) +"/3",canvasW-60,30)
+            ctx.closePath()
+    }
+
+    function bottomCheck() {
+        if(bColour=="black"){
+            if(ball.x+ball.r>blockA.x && ball.x-ball.r<blockA.x+blockA.w && ball.y-ball.r<=blockA.y+blockA.h &&ball.y-ball.r>blockA.y){
+                return false
+            }
+            else if(ball.x+ball.r>block2.x && ball.x-ball.r<block2.x+blk.w && ball.y-ball.r<=block2.y+blk.h &&ball.y-ball.r>block2.y){
+                return false
+            }
+            else if(ball.x+ball.r>block3.x && ball.x-ball.r<block3.x+blk.w && ball.y-ball.r<=block3.y+blk.h &&ball.y-ball.r>block3.y){
+                return false
+            }
+            return true
+        }
+        else{
+            if(ball.x+ball.r>blockC.x && ball.x-ball.r<blockC.x+blockC.w && ball.y-ball.r<=blockC.y+blockC.h &&ball.y-ball.r>blockC.y){
+                return false
+            }
+            else if(ball.x+ball.r>blockD.x && ball.x-ball.r<blockD.x+blockD.w && ball.y-ball.r<=blockD.y+blockD.h &&ball.y-ball.r>blockD.y){
+                return false
+            }
+            else if(ball.x+ball.r>block1.x && ball.x-ball.r<block1.x+blk.w && ball.y-ball.r<=block1.y+blk.h &&ball.y-ball.r>block1.y){
+                return false
+            }
+            return true
+        }
+    }
+
+    function leftCheck() {
+        if(bColour=="black"){
+            
+            if(ball.x+ball.r==blockA.x && ball.y+ball.r>blockA.y && ball.y-ball.r<blockA.y+blockA.h){
+                return false
+            }
+            else if(ball.x+ball.r==bigBlock.x && ball.y+ball.r>bigBlock.y && ball.y-ball.r<bigBlock.y+bigBlock.h){
+                return false
+            }
+            // else if(ball.x+ball.r>=block3.x && ball.x+ball.r<block3.x+blk.w && ball.y+ball.r>block3.y && ball.y-ball.r<block3.y+blk.h){
+            //     return false
+            // }
+            // else if(ball.x+ball.r>=block2.x && ball.x+ball.r<block2.x+blk.w && ball.y+ball.r>block2.y && ball.y-ball.r<block2.y+blk.h){
+            //     return false
+            // }
+            else{
+                return true
+            }
+        }
+        else{
+            
+            if(ball.x+ball.r==blockC.x && ball.y+ball.r>blockC.y && ball.y-ball.r<blockC.y+blockC.h){
+                return false
+            }
+            else if(ball.x+ball.r==blockD.x && ball.y+ball.r>blockD.y && ball.y-ball.r<blockD.y+blockD.h){
+                return false
+            }
+            else if(ball.x+ball.r==blockE.x && ball.y+ball.r>blockE.y && ball.y-ball.r<blockE.y+blockE.h){
+                return false
+            }
+            
+            else{
+                return true
+            }
+        }
+    }
+
+    function checkRight() {
+        if(bColour=="black"){
+            if(ball.x-ball.r<=blockA.x+blockA.w && ball.x+ball.r>blockA.x && ball.y+ball.r>blockA.y && ball.y-ball.r<blockA.y+blockA.h){
+                return false
+            }
+            return true
+        }
+        else{
+            if(ball.x-ball.r<=blockC.x+blockC.w && ball.x+ball.r>blockC.x && ball.y+ball.r>blockC.y && ball.y-ball.r<blockC.y+blockC.h){
+                return false
+            }
+            else if(ball.x-ball.r<=blockD.x+blockD.w && ball.x+ball.r>blockD.x && ball.y+ball.r>blockD.y && ball.y-ball.r<blockD.y+blockD.h){
+                return false
+            }
+            else if(ball.x-ball.r<=block1.x+blk.w && ball.x+ball.r>block1.x && ball.y+ball.r>block1.y && ball.y-ball.r<block1.y+blk.h){
+                return false
+            }
+            return true
+        }
+    }
+    
+    function space() {
+        document.addEventListener("keyup", e=> {
+            
+        if(e.keyCode == 32){
+            //console.log('Space pressed!');
+            if(bl=="black" && temp=="#D3D3D3"){
+                bl="#808080"
+                temp="white"
+                bColour="white"
+                drawB1()
+                drawB2()
+                drawB3()
+                drawBall()
+                drawRest()   
+                document.body.style.background = "black"; 
+            }
+            else{
+                bl="black"
+                temp="#D3D3D3"
+                bColour="black"
+                drawB1()
+                drawB2()
+                drawB3()
+                drawBall()
+                drawRest()
+                document.body.style.background = "white";
+            }
+        }
+           
+            
+        })
+    }
+    
+    function drawRest() {
+                
+        ctx.beginPath()
+        ctx.rect(blockA.x,blockA.y,blockA.w,blockA.h)
+        ctx.fillStyle=bl
+        ctx.fill()
+        ctx.closePath()
+
+        ctx.beginPath()
+        ctx.rect(blockC.x,blockC.y,blockC.w,blockC.h)
+        ctx.fillStyle=temp
+        ctx.fill()
+        ctx.closePath()
+
+        ctx.beginPath()
+        ctx.rect(bigBlock.x,bigBlock.y,bigBlock.w,bigBlock.h)
+        ctx.fillStyle=bl
+        ctx.fill()
+        ctx.closePath()
+
+        ctx.beginPath()
+        ctx.rect(blockD.x,blockD.y,blockD.w,blockD.h)
+        ctx.fillStyle=temp
+        ctx.fill()
+        ctx.closePath()
+
+        ctx.beginPath()
+        ctx.rect(blockE.x,blockE.y,blockE.w,blockE.h)
+        ctx.fillStyle=temp
+        ctx.fill()
+        ctx.closePath()
+    }
+
+    function drawB1() {
+        ctx.beginPath()
+        ctx.rect(block1.x,block1.y,blk.w,blk.h)
+        ctx.fillStyle=temp
+        ctx.fill()
+        ctx.closePath()
+    }
+
+    function drawB2() {
+        ctx.beginPath()
+        ctx.rect(block2.x,block2.y,blk.w,blk.h)
+        ctx.fillStyle=bl
+        ctx.fill()
+        ctx.closePath()
+    }
+
+    function drawB3() {
+        ctx.beginPath()
+        ctx.rect(block3.x,block3.y,blk.w,blk.h)
+        ctx.fillStyle=bl
+        ctx.fill()
+        ctx.closePath()
+    } 
+    
+    function checkB(){  
+        if(bigBlock.x+bigBlock.w>=block1.x || block1.x+blk.w >= canvasW){
+            block1.dx = -block1.dx
+        }
+        if(bigBlock.x+bigBlock.w>=block2.x || block2.x+blk.w >= canvasW){
+            block2.dx = -block2.dx
+        }
+        if(bigBlock.x+bigBlock.w>=block3.x || block3.x+blk.w >= canvasW){
+            block3.dx = -block3.dx
+        }
+    }
+
+    function restart() {
+        ball.x=40
+        ball.y=30
+        if(bColour!="black") {
+            bl="black"
+            temp="#D3D3D3"
+            bColour="black"
+            // drawB1()
+            // drawB2()
+            // drawB3()
+            drawBall()
+            // drawRest()
+            drawLife()
+            document.body.style.background = "white"; 
+    }
+}
+
+    function moveB1() {
+        
+        block1.x += block1.dx
+        block2.x -= block2.dx
+        block3.x += block3.dx
+        //console.log(block2.y,ball.y)
+        //console.log(block2.x,ball.x)
+
+        if(ball.x+ball.r>blockA.x && ball.x-ball.r<blockA.x+blockA.w && ball.y+ball.r==blockA.y && bColour=="black") {
+            //no need to fall 
+            //console.log("blockA")
+        }
+        else if(ball.x+ball.r>bigBlock.x && ball.x-ball.r<bigBlock.x+bigBlock.w && ball.y+ball.r==bigBlock.y && bColour=="black") {
+            //no need to fall
+            //console.log("Big Block")
+        }
+        else if(ball.x+ball.r>blockC.x && ball.x-ball.r<blockC.x+blockC.w && ball.y+ball.r==blockC.y && bColour=="white") {
+            //no need to fall
+            //console.log("blockC")
+        }
+        else if(ball.x+ball.r>blockD.x && ball.x-ball.r<blockD.x+blockD.w && ball.y+ball.r==blockD.y && bColour=="white") {
+            //no need to fall
+            //console.log("blockD")
+        }
+        else if(ball.x+ball.r>blockE.x && ball.x-ball.r<blockE.x+blockE.w && ball.y+ball.r==blockE.y && bColour=="white") {
+            //no need to fall
+            //console.log("blockE")
+        }
+        else if(ball.x+ball.r>block2.x && ball.x+ball.r<block2.x+blk.w && ball.y+ball.r==block2.y && bColour=="black") {
+            //move the ball along with block
+            //console.log("block2")
+            ball.x -= block2.dx
+        }
+        else if(ball.x+ball.r>block3.x && ball.x+ball.r<block3.x+blk.w && ball.y+ball.r==block3.y && bColour=="black") {
+            ball.x += block3.dx
+        }
+        else if(ball.x+ball.r>block1.x && ball.x+ball.r<block1.x+blk.w && ball.y+ball.r==block1.y && bColour=="white") {
+            ball.x += block1.dx
+        }
+        else {
+            ball.y += ball.dy
+        }
+
+        if(coin.c1==0 && coin.c2==0 &&coin.c3==0){
+            
+            gameOver = 3
+            coin.c1=1
+            coin.c2=1
+            coin.c3=1
+            alert("You Win!!!!!")
+            restart()
+        }
+
+        if (ball.y+ball.r>=canvasH || ball.y-ball.r<=9) {
+            if(gameOver>1){
+                gameOver-=1
+            }
+            else {
+                gameOver = 3
+                coin.c1=1
+                coin.c2=1
+                coin.c3=1
+                alert("Game Over!")                
+            }
+            
+            restart()
+            
+        }
+        if(ball.x+ball.r>=coin1.x && ball.x-ball.r<=coin1.x+10 && ball.y+ball.r>=coin1.y && ball.y-ball.r<=coin1.y+10){
+            coin.c1=0
+        }
+        if(ball.x+ball.r>=coin2.x && ball.x-ball.r<=coin2.x+10 && ball.y+ball.r>=coin2.y && ball.y-ball.r<=coin2.y+10){
+            coin.c2=0
+        }
+        if(ball.x+ball.r>=coin3.x && ball.x-ball.r<=coin3.x+10 && ball.y+ball.r>=coin3.y && ball.y-ball.r<=coin3.y+10){
+            coin.c3=0
+        }
+        
+        ctx.clearRect(0,0,canvasW,canvasH)
+        checkB()
+        drawB1()
+        drawB2()
+        drawB3()
+        drawBall()
+        drawRest()
+        drawLife()
+        drawRed()
+        if(coin.c1){
+            drawCoin1()
+        }
+        if(coin.c2){
+            drawCoin2()
+        }
+        if(coin.c3){
+            drawCoin3()
+        }
+        requestAnimationFrame(moveB1)
+        
+    }
+  
+    
+</script>
+</html>
