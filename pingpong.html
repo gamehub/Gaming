@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PingPong Game</title>
+</head>
+
+<body>
+    <canvas id="canvas" height="300" style="border: 1px solid black;
+    border-bottom: 2px solid brown;">Heyy canvas</canvas>
+    <script>
+        const canvas = document.getElementById('canvas')
+        const ctx = canvas.getContext('2d')
+        const canvasH = canvas.height
+        const canvasW = canvas.width
+        let score = 0;
+
+        let ball = { x: canvasH / 2, y: canvasW / 2, r: 10, dx: 2, dy: 1 };
+        let p = { w: 5, h: 50 }
+        let leftp = { x: 0, y: canvasH / 2 - p.h / 2 }
+        let rightp = { x: canvasW - 5, y: canvasH / 2 - p.h / 2 }
+
+        drawBall()
+        drawLeftPaddle()
+        drawRightPaddle()
+        drawScore()
+        moveBall()
+        moveleftp()
+
+        function detectCollision() {
+            //Detect Right Pedel Collision
+            if (ball.x > rightp.x - ball.r) {
+                ball.dx = -ball.dx;
+            }
+
+            //Detect Bottom or Top Collision 
+            if (ball.y + ball.r > canvasH || ball.y < ball.r) {
+                ball.dy = -ball.dy
+            }
+
+            //Detect Left Pedel Collision
+            if (ball.x < 0 + ball.r + p.w && ball.y > leftp.y && ball.y < leftp.y + p.h) {
+                ball.dx = -ball.dx
+                score += 1;
+            }
+            else if (ball.x < ball.r) {
+                ball.x = canvasH / 2;
+                ball.y = canvasW / 2;
+                alert("You Lost!!!")
+                score = 0
+            }
+        }
+        function moveleftp() {
+            document.addEventListener("mousemove", (e) => {
+                leftp.y = e.screenY - 150;
+                console.log(e.screenY, leftp.y);
+            });
+        }
+        function moveBall() {
+            ball.x += ball.dx
+            ball.y += ball.dy
+            rightp.y = ball.y - p.h / 2;
+            ctx.clearRect(0, 0, canvasW, canvasH)
+            detectCollision()
+            drawBall()
+            drawScore()
+            drawLeftPaddle()
+            drawRightPaddle()
+            requestAnimationFrame(moveBall);
+        }
+        function drawLeftPaddle() {
+            ctx.beginPath()
+            ctx.rect(leftp.x, leftp.y, p.w, p.h)
+            ctx.stroke()
+            ctx.closePath()
+        }
+        function drawRightPaddle() {
+            ctx.beginPath()
+            ctx.rect(rightp.x, rightp.y, p.w, p.h)
+            ctx.stroke()
+            ctx.closePath()
+        }
+        function drawBall() {
+            ctx.beginPath()
+            ctx.arc(ball.x, ball.y, ball.r, 0, 2 * Math.PI)
+            ctx.stroke()
+            ctx.closePath()
+        }
+        function drawScore() {
+            ctx.beginPath()
+            ctx.fillStyle = '#000'
+            ctx.fillText("Score: " + score, 20, 10)
+            ctx.closePath()
+        }
+    </script>
+</body>
+
+</html>
