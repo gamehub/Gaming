@@ -30,8 +30,14 @@ export function randomMovement(position, direction, objectExist) {
 }
 
 export function logicalMovement(position, direction, objectExist, getPositionXY, pacmanpos) {
-    let dir = direction;
-    let nextMovePos = position + dir.movement;
+    let dir = null;
+    let nextMovePos = 0;
+
+    if (objectExist(position, OBJECT_TYPE.GHOSTLAIR)) {
+        return randomMovement(position, direction, objectExist)
+    }
+
+
 
     //create array from direction object keys
     const keys = Object.keys(DIRECTIONS);
@@ -40,32 +46,33 @@ export function logicalMovement(position, direction, objectExist, getPositionXY,
     const [pacX, pacY] = getPositionXY(pacmanpos)
     let [ghostNewX, ghostNewY] = getPositionXY(nextMovePos)
 
+
     function isXCloser() {
-        if (Math.abs((ghostNewX - pacX)) <= Math.abs((ghostX - pacX))) return true
+        if (Math.abs((ghostNewX - pacX)) < Math.abs((ghostX - pacX))) return true
 
         else return false
     }
 
     function isYCloser() {
-        if (Math.abs((ghostNewY - pacY)) <= Math.abs((ghostY - pacY))) return true
+        if (Math.abs((ghostNewY - pacY)) < Math.abs((ghostY - pacY))) return true
         else return false
     }
 
-    let check1 = objectExist(nextMovePos, OBJECT_TYPE.WALL) ||
-        objectExist(nextMovePos, OBJECT_TYPE.GHOST);
 
-    let check2 = !(isYCloser() || isXCloser())
-
-    while (check1 || check2) {
-        const key = keys[Math.floor(Math.random() * keys.length)]
-        dir = DIRECTIONS[key];
+    for (let i = 0; i < keys.length; i++) {
+        dir = DIRECTIONS[keys[i]];
         nextMovePos = position + dir.movement;
-
         [ghostNewX, ghostNewY] = getPositionXY(nextMovePos);
-        console.log(ghostNewY, ghostNewX)
 
+        let c1 = isXCloser() || isYCloser()
+        let c2 = objectExist(nextMovePos, OBJECT_TYPE.WALL) || objectExist(nextMovePos, OBJECT_TYPE.GHOST)
+
+        console.log(getPositionXY(position), c1, c2, i)
+
+        if (c1 && !c2) {
+            return { nextMovePos, direction: dir }
+        }
     }
 
-    return { nextMovePos, direction: dir }
-
+    return randomMovement(position, direction, objectExist)
 }
