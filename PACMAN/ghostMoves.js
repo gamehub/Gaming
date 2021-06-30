@@ -67,7 +67,7 @@ export function logicalMovement(position, direction, objectExist, getPositionXY,
         let c1 = isXCloser() || isYCloser()
         let c2 = objectExist(nextMovePos, OBJECT_TYPE.WALL) || objectExist(nextMovePos, OBJECT_TYPE.GHOST)
 
-        console.log(getPositionXY(position), c1, c2, i)
+//         console.log(getPositionXY(position), c1, c2, i)
 
         if (c1 && !c2) {
             return { nextMovePos, direction: dir }
