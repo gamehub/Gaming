@@ -78,14 +78,9 @@ class GameBoard {
 
             //let { nextMovePos, direction } = {0, }
 
-            if (this.objectExist(character.pos, [OBJECT_TYPE.PACMAN])) {
-                var { nextMovePos, direction } = character.getNextMove(
-                    this.objectExist.bind(this))
-            } else {
-                var { nextMovePos, direction } = character.getNextMove(
-                    this.objectExist.bind(this), this.getPositionXY.bind(this), pacmanpos)
-            }
-
+            var { nextMovePos, direction } = character.getNextMove(
+                this.objectExist.bind(this), this.getPositionXY.bind(this), pacmanpos)
+            
             const { classesToRemove, classesToAdd } = character.makeMove();
 
             // .rotation is set to true only for pacman and false for ghost class
