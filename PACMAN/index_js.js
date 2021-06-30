@@ -141,14 +141,13 @@ function startGame() {
 
     // const ghosts = [new Ghost(5, 188, logicalMovement, OBJECT_TYPE.BLINKY)];
 
-
     const ghosts = [
-        new Ghost(5, 188, randomMovement, OBJECT_TYPE.BLINKY),
+        new Ghost(5, 188, logicalMovement, OBJECT_TYPE.BLINKY),
         new Ghost(4, 209, randomMovement, OBJECT_TYPE.PINKY),
-        new Ghost(3, 230, randomMovement, OBJECT_TYPE.INKY),
+        new Ghost(3, 230, logicalMovement, OBJECT_TYPE.INKY),
         new Ghost(2, 251, randomMovement, OBJECT_TYPE.CLYDE)
     ];
-
+   
 
     //in setinterval only functionname must be writen i.e. setInterval(gameLoop,time,param1,....)
     //but here gameLoop function has parameters.  so we have to write like () => gameLoop() inorder to inclyde parmaeters
